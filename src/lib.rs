@@ -75,7 +75,12 @@ impl FileContentIterator {
                     let py_buf = Bound::new(py, buf).ok()?.into_any().unbind();
                     return Some(Ok((path, py_buf)));
                 }
-                Ok(Err(e)) => return Some(Err(PyRuntimeError::new_err(e.to_string()))),
+                Ok(Err(e)) => {
+                    return Some(Err(PyRuntimeError::new_err(format!(
+                        "frio read error: {:#}",
+                        e
+                    ))));
+                }
                 Err(RecvTimeoutError::Disconnected) => return None,
                 Err(RecvTimeoutError::Timeout) => {
                     if let Err(e) = py.check_signals() {
