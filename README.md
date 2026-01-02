@@ -25,7 +25,7 @@ It bridges the gap between Python's high-level logic and Linux's cutting-edge **
 ### Quick Add
 ```bash
 # Add to your project
-uv add git+[https://github.com/Darcy-Zhang/frio.git](https://github.com/Darcy-Zhang/frio.git)
+uv add frio@git+https://github.com/Darcy-Zhang/frio.git
 ```
 
 ### Manual Sync
@@ -33,7 +33,7 @@ Add the following to your `pyproject.toml`:
 ```toml
 [project]
 dependencies = [
-    "frio @ git+[https://github.com/Darcy-Zhang/frio.git](https://github.com/Darcy-Zhang/frio.git)"
+    "frio @ git+https://github.com/Darcy-Zhang/frio.git"
 ]
 ```
 Then run:
