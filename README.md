@@ -16,24 +16,31 @@ It bridges the gap between Python's high-level logic and Linux's cutting-edge **
 
 ## 🛠 Installation
 
-Currently, `frio` is in early development. You need to build it from source using [maturin](https://github.com/PyO3/maturin).
+`frio` utilizes `uv` to handle building and installation automatically. No manual compilation required.
 
 ### Prerequisites
 * **Linux Kernel 5.6+** (Required for `io_uring` support)
-* **Rust Toolchain** (1.75+ recommended)
-* **Python 3.8+**
+* **Rust Toolchain** (Must be installed on the system)
 
-### Build & Install
+### Quick Add
 ```bash
-# Clone the repository
-git clone [https://github.com/Darcy-Zhang/frio.git](https://github.com/Darcy-Zhang/frio.git)
-cd frio
-
-# Build and install in your current environment
-maturin develop --release --strip
+# Add to your project
+uv add git+[https://github.com/Darcy-Zhang/frio.git](https://github.com/Darcy-Zhang/frio.git)
 ```
 
----
+### Manual Sync
+Add the following to your `pyproject.toml`:
+```toml
+[project]
+dependencies = [
+    "frio @ git+[https://github.com/Darcy-Zhang/frio.git](https://github.com/Darcy-Zhang/frio.git)"
+]
+```
+Then run:
+```bash
+uv sync
+```
+
 
 ## 🚀 Usage
 
