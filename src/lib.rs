@@ -25,7 +25,7 @@ impl FrioBuffer {
     }
 
     unsafe fn __getbuffer__(
-        slf: PyRefMut<'_, Self>,
+        slf: PyRef<'_, Self>,
         view: *mut ffi::Py_buffer,
         flags: c_int,
     ) -> PyResult<()> {
