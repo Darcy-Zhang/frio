@@ -95,7 +95,7 @@ impl FileContentIterator {
 
 #[gen_stub_pyfunction]
 #[pyfunction]
-#[pyo3(signature = (files, limit=0, threads=1))]
+#[pyo3(signature = (files, limit=0, threads=2))]
 fn fetch(
     _py: Python,
     files: Vec<String>,
