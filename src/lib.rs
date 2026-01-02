@@ -1,9 +1,54 @@
 use crossbeam_channel::{Receiver, RecvTimeoutError};
-use pyo3::{exceptions::PyRuntimeError, prelude::*, types::PyBytes};
+use mimalloc::MiMalloc;
+use pyo3::{exceptions::PyRuntimeError, ffi, prelude::*};
 use pyo3_stub_gen::{define_stub_info_gatherer, derive::*};
-use std::time::Duration;
+use std::{
+    os::raw::{c_int, c_void},
+    time::Duration,
+};
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
 
 mod scanner;
+
+#[gen_stub_pyclass]
+#[pyclass]
+struct FrioBuffer {
+    data: Vec<u8>,
+}
+
+#[pymethods]
+impl FrioBuffer {
+    fn __len__(&self) -> usize {
+        self.data.len()
+    }
+
+    unsafe fn __getbuffer__(
+        slf: PyRefMut<'_, Self>,
+        view: *mut ffi::Py_buffer,
+        flags: c_int,
+    ) -> PyResult<()> {
+        let py_ptr = slf.as_ptr();
+        let vec_data = &slf.data;
+
+        let res = unsafe {
+            ffi::PyBuffer_FillInfo(
+                view,
+                py_ptr,
+                vec_data.as_ptr() as *mut c_void,
+                vec_data.len() as ffi::Py_ssize_t,
+                1,
+                flags,
+            )
+        };
+
+        if res == -1 {
+            return Err(PyRuntimeError::new_err("Failed to fill buffer info"));
+        }
+        Ok(())
+    }
+}
 
 #[gen_stub_pyclass]
 #[pyclass]
@@ -26,8 +71,9 @@ impl FileContentIterator {
 
             match result {
                 Ok(Ok((path, data))) => {
-                    let py_bytes = PyBytes::new(py, &data).unbind().into_any();
-                    return Some(Ok((path, py_bytes)));
+                    let buf = FrioBuffer { data };
+                    let py_buf = Bound::new(py, buf).ok()?.into_any().unbind();
+                    return Some(Ok((path, py_buf)));
                 }
                 Ok(Err(e)) => return Some(Err(PyRuntimeError::new_err(e.to_string()))),
                 Err(RecvTimeoutError::Disconnected) => return None,
@@ -57,6 +103,7 @@ fn fetch(
 
 #[pymodule]
 fn frio(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<FrioBuffer>()?;
     m.add_class::<FileContentIterator>()?;
     m.add_function(wrap_pyfunction!(fetch, m)?)?;
     Ok(())

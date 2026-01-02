@@ -11,3 +11,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
+
+[tool.maturin]
+include = ["frio.pyi"]
+module-name = "frio"
