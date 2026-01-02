@@ -1,0 +1,22 @@
+[package]
+name = "frio"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "frio"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "stub_gen"
+path = "src/bin/stub_gen.rs"
+
+[dependencies]
+pyo3 = "0.27.2"
+monoio = "0.2.4"
+crossbeam-channel = "0.5"
+pyo3-stub-gen = "0.17.2"
+anyhow = "1.0.100"
+futures = "0.3.31"
+globset = "0.4.18"
+core_affinity = "0.8.3"
