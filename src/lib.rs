@@ -95,14 +95,14 @@ impl FileContentIterator {
 
 #[gen_stub_pyfunction]
 #[pyfunction]
-#[pyo3(signature = (files, chunk_size=0, threads=1))]
+#[pyo3(signature = (files, limit=0, threads=1))]
 fn fetch(
     _py: Python,
     files: Vec<String>,
-    chunk_size: usize,
+    limit: usize,
     threads: usize,
 ) -> PyResult<FileContentIterator> {
-    let receiver = scanner::fast_readfiles(files, chunk_size, threads);
+    let receiver = scanner::fast_readfiles(files, limit, threads);
     Ok(FileContentIterator { receiver })
 }
 

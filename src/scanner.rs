@@ -7,7 +7,7 @@ pub type ReadResult = (String, Vec<u8>);
 
 pub fn fast_readfiles(
     files: Vec<String>,
-    chunk_size: usize,
+    limit: usize,
     threads: usize,
 ) -> Receiver<Result<ReadResult>> {
     let num_threads = if threads == 0 { 1 } else { threads };
@@ -49,7 +49,7 @@ pub fn fast_readfiles(
                     .for_each_concurrent(PER_THREAD_CONCURRENCY, |path| {
                         let sender = thread_sender.clone();
                         async move {
-                            let res = read_one_file_buffered(&path, chunk_size).await;
+                            let res = read_one_file_buffered(&path, limit).await;
 
                             let send_data = res.map(|data| (path.clone(), data));
 
